@@ -3,21 +3,35 @@ package io.github.team10.escapefromuni;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ObjectMap;
 
+/**
+ * Manages all {@link Room} and {@link Door} instances in the game.
+ * 
+ * Responsible for initialising the pre-defined game map, handling transitions between rooms, drawing room and door 
+ * textures, and disposing of those textures when no longer needed.
+ */
 public class RoomManager {
     public EscapeGame game;
 
-    private Player player;
+    private final Player player;
     private Room currentRoom;
     private Door[] doors = new Door[4];
     private final ObjectMap<String, Texture> roomTextures = new ObjectMap<>();
 
+    /**
+     * Initialises a RoomManager.
+     */
     public RoomManager(EscapeGame game, Player player)
     {
         this.game = game;
         this.player = player;
     }
 
-
+    /**
+     * Initialise the game map, which will be the same every time.
+     * 
+     * Initialise 4 doors, create rooms and create room connections. Room textures are stored in a list for easy 
+     * access and disposal. Also loads the first room.
+     */
     public void initialiseMap() {
         initialiseDoors();
 
@@ -31,7 +45,7 @@ public class RoomManager {
         Room room2 = new Room(roomTextures.get("room2"));
         Room room3 = new Room(roomTextures.get("room3"));
 
-        // Initialise connections
+        // Initialise connections - remember both ways.
         room1.addAdjacent(room2, DoorDirection.EAST);
         room2.addAdjacent(room1, DoorDirection.WEST);
         room2.addAdjacent(room3, DoorDirection.NORTH);
@@ -39,14 +53,14 @@ public class RoomManager {
 
         currentRoom = room1;
         updateDoors(currentRoom);
-
-        System.out.println("Room1 EAST = " + room1.getAdjacent(DoorDirection.EAST));
-        System.out.println("Room2 WEST = " + room2.getAdjacent(DoorDirection.WEST));
-        System.out.println("Room2 NORTH = " + room2.getAdjacent(DoorDirection.NORTH));
-        System.out.println("Room3 SOUTH = " + room3.getAdjacent(DoorDirection.SOUTH));
-
     }
 
+    /**
+     * Will change the current room, given the direction of the new room in relation to the current room.
+     * 
+     * Updates the active doors, and repositions the player to the appropriate entrance location in the new room.
+     * @param direction The direction of the new room.
+     */
     public void changeRoom(DoorDirection direction) {
         // Will unload current room and load next room
         // Will update which doors are visible. Note that only 4 door objects are used -
@@ -58,6 +72,9 @@ public class RoomManager {
         updatePlayerPosition(direction);
     }
 
+    /**
+     * Updates the player's position when changing rooms, to prevent the player colliding with the door the next frame.
+     */
     private void updatePlayerPosition(DoorDirection direction)
     {
         float worldWidth = game.viewport.getWorldWidth();
@@ -68,6 +85,9 @@ public class RoomManager {
         if(direction == DoorDirection.WEST) player.setCenter(worldWidth - 2, worldHeight / 2);
     }
 
+    /**
+     * Draw the current room and it's active doors.
+     */
     public void drawMap()
     {
         drawCurrentRoom();
@@ -91,7 +111,8 @@ public class RoomManager {
     }
 
     private void initialiseDoors() {
-        // Will create the four doors at the start of the game
+        // Will create the four doors at the start of the game.
+        // Assumes a viewport size of width 16 and height 9.
         Door northDoor = new Door(this, DoorDirection.NORTH, 7.5f, 8f);
         Door eastDoor = new Door(this, DoorDirection.EAST, 15f, 4f);
         Door southDoor = new Door(this, DoorDirection.SOUTH, 7.5f, 0f);
@@ -100,9 +121,10 @@ public class RoomManager {
         doors = new Door[]{northDoor, eastDoor, southDoor, westDoor};
     }
 
+    /**
+     * Will update which doors are visible based on the new room
+     */
     private void updateDoors(Room newRoom) {
-        // Called from changeRoom()
-        // Will update which doors are visible based on the new room
         Room[] allAdjacent = newRoom.getAllAdjacent();
         for (int i = 0; i < 4; i++)
         {
@@ -110,11 +132,16 @@ public class RoomManager {
         }
     }
 
+    /**
+     * Update the event type indicators by the doors.
+     */
     private void updateEventIndicators() {
-        // Called from changeRoom()
-        // Will update the event type indicators by the doors
+        //TODO: Implement event indicators.
     }
 
+    /**
+     * Check whether the player is colliding with any of the doors.
+     */
     public void checkDoorCollision()
     {
         for (Door door : doors)
@@ -127,6 +154,9 @@ public class RoomManager {
         }
     }
 
+    /**
+     * Dispose of all room and door textures.
+     */
     public void dispose()
     {
         for (Texture t : roomTextures.values()) {
