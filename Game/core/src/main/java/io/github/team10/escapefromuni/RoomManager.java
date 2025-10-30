@@ -17,6 +17,8 @@ public class RoomManager {
     private Door[] doors = new Door[4];
     private final ObjectMap<String, Texture> roomTextures = new ObjectMap<>();
     private Texture[] indicatorTextures = new Texture[4];
+    private Texture positiveIndicator;
+    private Texture negativeIndicator;
     
 
     /**
@@ -58,6 +60,10 @@ public class RoomManager {
 
         currentRoom = room1;
         updateDoors(currentRoom);
+
+        positiveIndicator = new Texture("PositiveIndicator.png");
+        negativeIndicator = new Texture("NegativeIndicator.png");
+
         updateEventIndicators();
     }
 
@@ -112,7 +118,6 @@ public class RoomManager {
 
     private void drawDoors()
     {
-        // FIXME: After loading and unloading a door, leads to black box where door was.
         for (Door door : doors)
         {
             door.draw();
@@ -171,19 +176,18 @@ public class RoomManager {
         Room[] rooms = currentRoom.getAllAdjacent();
         for (int i = 0; i < 4; i++)
         {
-            if (indicatorTextures[i] != null)
-            {
-                indicatorTextures[i].dispose();
-            }
+            indicatorTextures[i] = null;
+
             // Check Room actually exists before trying to access event type.
             if (rooms[i] == null) continue;
+
             if (rooms[i].getEventType() == EventType.POSITIVE)
             {
-                indicatorTextures[i] = new Texture("PositiveIndicator.png");
+                indicatorTextures[i] = positiveIndicator;
             }
             else if (rooms[i].getEventType() == EventType.NEGATIVE)
             {
-                indicatorTextures[i] = new Texture("NegativeIndicator.png");
+                indicatorTextures[i] = negativeIndicator;
             }
         }
     }
@@ -217,9 +221,7 @@ public class RoomManager {
             door.dispose();
         }
 
-        for (Texture t : indicatorTextures)
-        {
-            if (t != null) t.dispose();
-        }
+        positiveIndicator.dispose();
+        negativeIndicator.dispose();
     }
 }
