@@ -56,7 +56,7 @@ public class RoomManager {
         room3.addAdjacent(room2, DoorDirection.SOUTH);
 
         // Initialise Events
-        room2.setEvent(new Event(EventType.POSITIVE));
+        room2.setEvent(new EventLongboi(player, game));
 
         currentRoom = room1;
         updateDoors(currentRoom);
@@ -77,12 +77,22 @@ public class RoomManager {
         // Will unload current room and load next room
         // Will update which doors are visible. Note that only 4 door objects are used -
         // they can be made visible or invisible.
+        if (currentRoom.getEventType() != EventType.NONE)
+        {
+            currentRoom.getEvent().endEvent();
+        }
+
         Room newRoom = currentRoom.getAdjacent(direction);
         updateDoors(newRoom);
 
         currentRoom = newRoom;
         updatePlayerPosition(direction);
         updateEventIndicators();
+
+        if (newRoom.getEventType() != EventType.NONE)
+        {
+            newRoom.getEvent().startEvent();
+        }
     }
 
     /**
@@ -104,6 +114,7 @@ public class RoomManager {
     public void drawMap()
     {
         drawCurrentRoom();
+        drawCurrentRoomEvent();
         drawDoors();
         drawIndicators();
     }
@@ -114,6 +125,14 @@ public class RoomManager {
         float worldWidth = game.viewport.getWorldWidth();
 		float worldHeight = game.viewport.getWorldHeight();
         game.batch.draw(roomTexture, 0, 0, worldWidth, worldHeight);
+    }
+
+    private void drawCurrentRoomEvent()
+    {
+        if (currentRoom.getEventType() != EventType.NONE)
+        {
+            currentRoom.getEvent().draw();
+        }
     }
 
     private void drawDoors()
@@ -189,6 +208,15 @@ public class RoomManager {
             {
                 indicatorTextures[i] = negativeIndicator;
             }
+        }
+    }
+
+    public void update(float delta)
+    {
+        checkDoorCollision();
+        if (currentRoom.getEventType() != EventType.NONE)
+        {
+            currentRoom.getEvent().update(delta);
         }
     }
 

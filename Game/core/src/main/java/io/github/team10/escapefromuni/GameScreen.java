@@ -29,13 +29,21 @@ public class GameScreen extends ScreenAdapter {
 		draw();
 	}
 
+    /**
+     * Performs game logic each frame. 
+     * 
+     * Always called before drawing textures.
+     * @param delta float representing the time since the last frame.
+     */
     private void update(float delta)
     {
         player.update(delta);
-        roomManager.checkDoorCollision();
-        
+        roomManager.update(delta);
     }
 
+    /**
+     * Draw textures to the screen each frame using the {@link EscapeGame}'s SpriteBatch.
+     */
     private void draw()
     {
         ScreenUtils.clear(Color.BLACK);

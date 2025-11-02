@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Represents the player character.
@@ -15,6 +16,7 @@ public class Player {
     public Sprite playerSprite;
     public float speed;
     public EscapeGame game;
+    private boolean movementEnabled;
 
     private final float EDGE_LIMIT = 1f;
 
@@ -36,6 +38,7 @@ public class Player {
         float centerX = game.viewport.getWorldWidth() / 2f;
         float centerY = game.viewport.getWorldHeight() / 2f;
         playerSprite.setCenter(centerX, centerY);
+        this.movementEnabled = true;
     }
 
     /**
@@ -44,7 +47,10 @@ public class Player {
      */
     public void update(float delta)
     {
-        move(delta);
+        if (movementEnabled)
+        {
+            move(delta);
+        }
     }
 
     /**
@@ -81,6 +87,15 @@ public class Player {
                 playerSprite.translateY(-speed * delta);
             }
         }
+    }
+
+    /**
+     * Allows enabling or disabling movement for the player.
+     * @param enabled boolean representing whether the player will be able to move.
+     */
+    public void enableMovement(boolean enabled)
+    {
+        this.movementEnabled = enabled;
     }
 
     /**
@@ -128,5 +143,15 @@ public class Player {
     public void setCenter(float x, float y)
     {
         playerSprite.setCenter(x, y);
+    }
+
+    /**
+     * Return the center position of the player sprite, as a Vector2.
+     */
+    public Vector2 getCenter()
+    {
+        float centerX = playerSprite.getX() + playerSprite.getWidth() / 2f;
+        float centerY = playerSprite.getY() + playerSprite.getHeight() / 2f;
+        return new Vector2(centerX, centerY);
     }
 }

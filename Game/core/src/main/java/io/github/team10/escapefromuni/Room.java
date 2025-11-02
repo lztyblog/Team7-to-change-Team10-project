@@ -71,6 +71,11 @@ public class Room {
         this.event = event;
     }
 
+    public Event getEvent()
+    {
+        return this.event;
+    }
+
     public EventType getEventType() {
         if (event != null)
         {
