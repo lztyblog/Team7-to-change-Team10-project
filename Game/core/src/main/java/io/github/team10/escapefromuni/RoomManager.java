@@ -57,6 +57,7 @@ public class RoomManager {
 
         // Initialise Events
         room2.setEvent(new EventLongboi(player, game));
+        room3.setEvent(new EventGreggs(player, game));
 
         currentRoom = room1;
         updateDoors(currentRoom);

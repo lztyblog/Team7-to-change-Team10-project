@@ -154,4 +154,13 @@ public class Player {
         float centerY = playerSprite.getY() + playerSprite.getHeight() / 2f;
         return new Vector2(centerX, centerY);
     }
+
+    /**
+     * Increase the player's speed by a fixed amount.
+     * @param speedIncrease the amount by which the speed will increase.
+     */
+    public void increaseSpeed(float speedIncrease)
+    {
+        speed += speedIncrease;
+    }
 }
