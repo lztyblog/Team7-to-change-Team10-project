@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: Game
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -20,6 +24,11 @@ jobs:
         java-version: "17"
         distribution: "temurin"
 
-        
     - name: Make gradlew executable
-      working-directory: Ga
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Run tests (optional)
+      run: ./gradlew test
